@@ -1,0 +1,1410 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>QuizMaker by Zikri</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--bg1:#0f0c29;--bg2:#302b63;--bg3:#24243e;--accent:#a855f7;--accent2:#ec4899;--accent3:#22d3ee;--card:rgba(255,255,255,.06);--border:rgba(255,255,255,.12);--text:#fff;--muted:rgba(255,255,255,.6)}
+body[data-theme="sunset"]{--bg1:#3d1a1a;--bg2:#7c2d12;--bg3:#451a03;--accent:#f97316;--accent2:#ef4444;--accent3:#fbbf24}
+body[data-theme="ocean"]{--bg1:#082f49;--bg2:#0c4a6e;--bg3:#0e7490;--accent:#06b6d4;--accent2:#3b82f6;--accent3:#67e8f9}
+body[data-theme="forest"]{--bg1:#052e16;--bg2:#14532d;--bg3:#166534;--accent:#22c55e;--accent2:#84cc16;--accent3:#a3e635}
+body[data-theme="neon"]{--bg1:#0a0a0a;--bg2:#171717;--bg3:#262626;--accent:#22d3ee;--accent2:#ec4899;--accent3:#a855f7}
+body[data-theme="mono"]{--bg1:#0a0a0a;--bg2:#1c1c1c;--bg3:#262626;--accent:#e5e5e5;--accent2:#a3a3a3;--accent3:#737373}
+html{height:100%}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:linear-gradient(135deg,var(--bg1),var(--bg2),var(--bg3));background-attachment:fixed;color:var(--text);min-height:100vh;overflow-x:hidden;line-height:1.5;transition:background .5s ease;padding-bottom:env(safe-area-inset-bottom)}
+.blob{position:fixed;border-radius:50%;filter:blur(60px);opacity:.28;pointer-events:none;z-index:0;transition:background .5s}
+.blob.b1{width:320px;height:320px;background:var(--accent);top:-140px;left:-140px;animation:f1 20s ease-in-out infinite}
+.blob.b2{width:280px;height:280px;background:var(--accent2);bottom:-100px;right:-100px;animation:f2 24s ease-in-out infinite}
+@keyframes f1{0%,100%{transform:translate(0,0)}50%{transform:translate(50px,35px)}}
+@keyframes f2{0%,100%{transform:translate(0,0)}50%{transform:translate(-40px,-50px)}}
+.screen{display:none;position:relative;z-index:1;min-height:100vh;padding:24px 16px 80px}
+.screen.active{display:block;animation:fu .35s ease}
+@keyframes fu{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.wrap{max-width:600px;margin:0 auto}
+h1{font-size:clamp(26px,6vw,38px);font-weight:800;letter-spacing:-.02em;line-height:1.15}
+h2{font-size:clamp(19px,4.5vw,24px);font-weight:700}
+.sub{color:var(--muted);font-size:15px;margin-top:10px}
+.grad{background:linear-gradient(120deg,var(--accent),var(--accent2),var(--accent3));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.brand{position:fixed;top:14px;right:14px;z-index:50;font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;padding:7px 13px;border-radius:99px;background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.15);color:#fff}
+.brand span{background:linear-gradient(120deg,var(--accent),var(--accent2),var(--accent3));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:15px 22px;border:none;border-radius:16px;font-family:inherit;font-size:16px;font-weight:700;cursor:pointer;transition:transform .15s,box-shadow .2s,background .2s;text-decoration:none;color:#fff}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:linear-gradient(120deg,var(--accent),var(--accent2));box-shadow:0 8px 24px -8px rgba(168,85,247,.6)}
+.btn-primary:disabled{opacity:.6;cursor:wait}
+.btn-ghost{background:var(--card);border:1px solid var(--border)}
+.btn-ghost:hover{background:rgba(255,255,255,.1)}
+.btn-sm{padding:10px 15px;font-size:14px;border-radius:12px;width:auto}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap}
+.btn-row .btn{flex:1;min-width:140px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:20px}
+.card+.card{margin-top:14px}
+.inp{width:100%;padding:14px 16px;border-radius:14px;background:rgba(0,0,0,.25);border:1px solid var(--border);color:#fff;font-family:inherit;font-size:15px;font-weight:500;outline:none;transition:border .2s,background .2s}
+.inp::placeholder{color:rgba(255,255,255,.35)}
+.inp:focus{border-color:var(--accent);background:rgba(0,0,0,.35)}
+textarea.inp{resize:vertical;min-height:70px}
+.label{display:block;font-size:13px;font-weight:700;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em}
+.field{margin-bottom:16px}
+.hero{text-align:center;padding-top:6vh}
+.logo{font-size:60px;line-height:1;margin-bottom:18px;animation:bob 3.5s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.hero .btn{margin-top:12px}
+.byline{margin-top:12px;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.byline b{background:linear-gradient(120deg,var(--accent),var(--accent2),var(--accent3));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.features{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:32px}
+.feat{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 8px}
+.feat .ico{font-size:22px;margin-bottom:5px}
+.feat .t{font-size:11px;font-weight:700;color:var(--muted)}
+.nav{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.nav .back{width:42px;height:42px;border-radius:12px;border:1px solid var(--border);background:var(--card);color:#fff;font-size:18px;cursor:pointer;display:grid;place-items:center;flex-shrink:0}
+.theme-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.theme-dot{aspect-ratio:1;border-radius:12px;cursor:pointer;border:2px solid transparent;position:relative;transition:transform .15s}
+.theme-dot.active{border-color:#fff;box-shadow:0 0 0 2px rgba(255,255,255,.15)}
+.theme-dot::after{content:'✓';position:absolute;inset:0;display:grid;place-items:center;color:#fff;font-weight:800;font-size:15px;opacity:0;text-shadow:0 2px 6px rgba(0,0,0,.6)}
+.theme-dot.active::after{opacity:1}
+.t-purple{background:linear-gradient(135deg,#a855f7,#ec4899,#22d3ee)}
+.t-sunset{background:linear-gradient(135deg,#f97316,#ef4444,#fbbf24)}
+.t-ocean{background:linear-gradient(135deg,#06b6d4,#3b82f6,#67e8f9)}
+.t-forest{background:linear-gradient(135deg,#22c55e,#84cc16,#a3e635)}
+.t-neon{background:linear-gradient(135deg,#22d3ee,#ec4899,#a855f7)}
+.t-mono{background:linear-gradient(135deg,#e5e5e5,#a3a3a3,#737373)}<style>
+.qcard{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:12px}
+.qhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.qhead .num{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;background:linear-gradient(120deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.btn-x{width:30px;height:30px;border-radius:9px;border:1px solid rgba(239,68,68,.35);background:rgba(239,68,68,.12);color:#fca5a5;cursor:pointer;font-size:14px;display:grid;place-items:center}
+.opts{margin-top:10px;display:flex;flex-direction:column;gap:8px}
+.opt-row{display:flex;gap:8px;align-items:center}
+.check{width:40px;height:44px;flex-shrink:0;border-radius:12px;border:1px solid var(--border);background:rgba(0,0,0,.25);color:rgba(255,255,255,.3);cursor:pointer;font-size:16px;font-weight:800;display:grid;place-items:center;transition:all .2s}
+.check.active{background:linear-gradient(120deg,#22c55e,#16a34a);color:#fff;border-color:transparent}
+.opt-row .inp{padding:12px 14px;font-size:14px}
+.hint{font-size:12px;color:var(--muted);margin-top:6px;text-align:center}
+.img-tools{display:flex;gap:8px;margin-top:10px}
+.img-btn{flex:1;padding:10px 12px;border-radius:11px;border:1px dashed rgba(255,255,255,.25);background:rgba(255,255,255,.03);color:var(--muted);font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;text-align:center}
+.img-btn.has{border-style:solid;border-color:rgba(34,197,94,.5);color:#4ade80;background:rgba(34,197,94,.08)}
+.img-preview{position:relative;margin-top:10px;border-radius:14px;overflow:hidden;border:1px solid var(--border);background:rgba(0,0,0,.3)}
+.img-preview img{width:100%;display:block;max-height:220px;object-fit:cover}
+.img-preview .rm{position:absolute;top:8px;right:8px;width:32px;height:32px;border-radius:10px;border:none;background:rgba(0,0,0,.65);color:#fff;cursor:pointer;font-size:15px;display:grid;place-items:center}
+.q-img{margin-bottom:16px;border-radius:14px;overflow:hidden;border:1px solid var(--border);background:rgba(0,0,0,.25)}
+.q-img img{width:100%;display:block;max-height:320px;object-fit:contain;background:rgba(0,0,0,.4)}
+.progress-wrap{margin-bottom:20px}
+.progress-top{display:flex;justify-content:space-between;font-size:13px;font-weight:700;color:var(--muted);margin-bottom:10px;align-items:center;gap:8px}
+.progress-bar{height:8px;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden}
+.progress-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent3));transition:width .4s ease}
+.combo-tag{font-weight:800;padding:3px 10px;border-radius:99px;background:linear-gradient(120deg,#f97316,#ef4444);font-size:12px;letter-spacing:.05em;text-transform:uppercase;animation:comboPop .35s ease}
+@keyframes comboPop{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+.q-text{font-size:clamp(18px,4.4vw,23px);font-weight:700;line-height:1.35;margin-bottom:20px}
+.choices{display:flex;flex-direction:column;gap:10px}
+.choice{display:flex;align-items:center;gap:14px;padding:16px;border-radius:15px;border:1px solid var(--border);background:var(--card);cursor:pointer;text-align:left;color:#fff;font-family:inherit;font-size:15px;font-weight:600;transition:all .18s;width:100%}
+.choice .badge{width:30px;height:30px;flex-shrink:0;border-radius:9px;background:rgba(255,255,255,.08);border:1px solid var(--border);display:grid;place-items:center;font-weight:800;font-size:13px;transition:all .18s}
+.choice.correct{background:linear-gradient(120deg,rgba(34,197,94,.35),rgba(22,163,74,.25));border-color:#22c55e}
+.choice.correct .badge{background:linear-gradient(120deg,#22c55e,#16a34a);border-color:transparent}
+.choice.wrong{background:linear-gradient(120deg,rgba(239,68,68,.3),rgba(220,38,38,.2));border-color:#ef4444;animation:shake .4s ease}
+.choice.wrong .badge{background:linear-gradient(120deg,#ef4444,#dc2626);border-color:transparent}
+.choice.locked{pointer-events:none}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.fx-emoji{position:fixed;font-size:46px;pointer-events:none;z-index:999;animation:fxFloat 1s ease-out forwards}
+@keyframes fxFloat{0%{transform:translate(-50%,-50%) scale(0);opacity:0}25%{transform:translate(-50%,-50%) scale(1.15);opacity:1}100%{transform:translate(-50%,-140%) scale(.8);opacity:0}}
+.result-head{text-align:center;padding:8px 0 24px}
+.score-circle{width:160px;height:160px;border-radius:50%;margin:0 auto 20px;background:conic-gradient(from -90deg,var(--accent) var(--p),rgba(255,255,255,.08) 0);display:grid;place-items:center;position:relative;animation:pop .5s ease}
+@keyframes pop{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
+.score-circle::before{content:'';position:absolute;inset:12px;border-radius:50%;background:var(--bg1);transition:background .5s}
+.score-inner{position:relative;z-index:1;text-align:center}
+.score-num{font-size:40px;font-weight:800;line-height:1;letter-spacing:-.03em}
+.score-lbl{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-top:4px}
+.verdict-emoji{font-size:52px;line-height:1;margin-bottom:8px}
+.verdict-title{font-size:22px;font-weight:800;margin-bottom:6px}
+.verdict-desc{color:var(--muted);font-size:14px;max-width:420px;margin:0 auto}
+.review-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.07);font-size:14px}
+.review-item:last-child{border-bottom:none}
+.review-item .mark{width:24px;height:24px;flex-shrink:0;border-radius:8px;display:grid;place-items:center;font-size:13px;font-weight:800;margin-top:1px}
+.mark.ok{background:rgba(34,197,94,.18);color:#4ade80}
+.mark.no{background:rgba(239,68,68,.18);color:#f87171}
+.review-item .rq{font-weight:600;margin-bottom:3px}
+.review-item .ra{color:var(--muted);font-size:13px}
+.review-item .rimg{margin-top:8px;border-radius:10px;overflow:hidden;border:1px solid var(--border);max-width:180px}
+.review-item .rimg img{width:100%;display:block}
+.lb-row{display:flex;align-items:center;gap:12px;padding:11px 13px;border-radius:13px;background:rgba(255,255,255,.04);border:1px solid var(--border);margin-bottom:7px}
+.lb-row.me{background:linear-gradient(120deg,rgba(168,85,247,.2),rgba(236,72,153,.15));border-color:var(--accent)}
+.lb-rank{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;font-weight:800;font-size:14px;background:rgba(255,255,255,.08);flex-shrink:0}
+.lb-rank.g1{background:linear-gradient(120deg,#fbbf24,#f59e0b);color:#000}
+.lb-rank.g2{background:linear-gradient(120deg,#cbd5e1,#94a3b8);color:#000}
+.lb-rank.g3{background:linear-gradient(120deg,#d97706,#b45309)}
+.lb-name{flex:1;font-weight:700;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lb-score{font-weight:800;font-size:15px}
+.lb-meta{font-size:11px;color:var(--muted);font-weight:600}
+.spinner{width:22px;height:22px;border-radius:50%;border:3px solid rgba(255,255,255,.15);border-top-color:var(--accent);animation:spin .8s linear infinite;margin:14px auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+.link-box{display:flex;gap:8px;background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:14px;padding:6px 6px 6px 16px;align-items:center;margin-bottom:12px}
+.link-box input{flex:1;background:none;border:none;color:#fff;font-family:inherit;font-size:13px;outline:none;min-width:0}
+.preview-card{border-radius:20px;padding:24px 20px;text-align:center;background:linear-gradient(135deg,rgba(168,85,247,.22),rgba(236,72,153,.16));border:1px solid rgba(168,85,247,.3);margin-bottom:16px}
+.preview-card .ptitle{font-size:22px;font-weight:800;margin-bottom:6px}
+.preview-card .pmeta{font-size:13px;color:var(--muted)}
+.preview-card .pemoji{font-size:42px;margin-bottom:10px;display:block}
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(200px);background:linear-gradient(120deg,#22c55e,#16a34a);color:#fff;padding:13px 24px;border-radius:14px;font-weight:700;font-size:14px;box-shadow:0 12px 32px -8px rgba(34,197,94,.7);z-index:999;transition:transform .35s ease,opacity .25s ease;pointer-events:none;opacity:0;visibility:hidden;max-width:calc(100vw - 32px);text-align:center}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1;visibility:visible}
+.center{text-align:center}
+.mt{margin-top:18px}
+.banner{background:rgba(34,211,238,.1);border:1px solid rgba(34,211,238,.3);border-radius:14px;padding:12px 16px;font-size:13px;color:#a5f3fc;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.banner.ok{background:rgba(34,197,94,.12);border-color:rgba(34,197,94,.4);color:#86efac}
+.banner.err{background:rgba(239,68,68,.12);border-color:rgba(239,68,68,.4);color:#fca5a5}
+.an-stat-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px}
+.an-stat{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 10px;text-align:center}
+.an-stat .n{font-size:22px;font-weight:800;line-height:1;background:linear-gradient(120deg,var(--accent),var(--accent2),var(--accent3));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.an-stat .l{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-top:5px}
+.an-row{background:var(--card);border:1px solid var(--border);border-radius:16px;margin-bottom:10px;overflow:hidden}
+.an-row.open{border-color:var(--accent)}
+.an-head{display:flex;align-items:center;gap:12px;padding:14px;cursor:pointer;user-select:none}
+.an-rank{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;font-weight:800;font-size:14px;background:rgba(255,255,255,.08);flex-shrink:0}
+.an-rank.g1{background:linear-gradient(120deg,#fbbf24,#f59e0b);color:#000}
+.an-rank.g2{background:linear-gradient(120deg,#cbd5e1,#94a3b8);color:#000}
+.an-rank.g3{background:linear-gradient(120deg,#d97706,#b45309)}
+.an-name{flex:1;font-weight:700;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.an-name .sub{font-size:11px;color:var(--muted);font-weight:600;margin-top:2px}
+.an-score{font-weight:800;font-size:16px;color:var(--accent3)}
+.an-arrow{color:var(--muted);font-size:11px;transition:transform .25s;margin-left:6px}
+.an-row.open .an-arrow{transform:rotate(180deg)}
+.an-body{max-height:0;overflow:hidden;transition:max-height .3s ease;padding:0 14px}
+.an-row.open .an-body{max-height:2500px;padding-bottom:14px}
+.an-btn{padding:8px 12px;border-radius:10px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;border:1px solid var(--border);background:rgba(255,255,255,.06);color:#fff;display:inline-flex;align-items:center;gap:5px;margin-bottom:10px}
+.an-btn.danger{border-color:rgba(239,68,68,.4);background:rgba(239,68,68,.15);color:#fca5a5}
+.an-qa{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:13px}
+.an-qa:last-child{border-bottom:none}
+.an-qa .mk{width:20px;height:20px;flex-shrink:0;border-radius:6px;display:grid;place-items:center;font-size:11px;font-weight:800;margin-top:2px}
+.an-qa.ok .mk{background:rgba(34,197,94,.2);color:#4ade80}
+.an-qa.no .mk{background:rgba(239,68,68,.2);color:#f87171}
+.an-qa .q{font-weight:600;margin-bottom:3px;line-height:1.3}
+.an-qa .a{color:var(--muted);font-size:12px;line-height:1.4}
+.qstat{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:12px;padding:11px 13px;margin-bottom:8px}
+.qstat .qt{font-size:12px;font-weight:700;margin-bottom:5px}
+.qstat .qb{height:6px;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden;margin-bottom:5px}
+.qstat .qf{height:100%;border-radius:99px;background:linear-gradient(90deg,#ef4444,#dc2626)}
+.qstat .qd{font-size:11px;color:var(--muted);font-weight:600}
+.empty-state{text-align:center;padding:40px 20px;color:var(--muted)}
+.empty-state .e{font-size:48px;margin-bottom:12px;display:block}
+.music-wrap{position:fixed;bottom:18px;right:16px;z-index:60;display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+.music-btn,.music-pick{width:52px;height:52px;border-radius:50%;border:1px solid rgba(255,255,255,.15);background:rgba(0,0,0,.6);color:#fff;cursor:pointer;display:grid;place-items:center;box-shadow:0 8px 24px -8px rgba(0,0,0,.7)}
+.music-btn{font-size:22px}.music-pick{font-size:20px}
+.music-btn.playing{background:linear-gradient(120deg,var(--accent),var(--accent2))}
+.music-panel{position:fixed;bottom:82px;right:16px;z-index:65;background:rgba(20,15,45,.96);border:1px solid var(--border);border-radius:16px;padding:12px;min-width:230px;box-shadow:0 16px 40px -10px rgba(0,0,0,.8);display:none}
+.music-panel.open{display:block}
+.music-panel h4{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;padding:0 4px}
+.song-opt{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:11px;cursor:pointer;font-size:13px;font-weight:600;color:#fff;width:100%;border:none;background:none;font-family:inherit;text-align:left}
+.song-opt.active{background:linear-gradient(120deg,rgba(168,85,247,.3),rgba(236,72,153,.2))}
+.song-opt .sdot{width:8px;height:8px;border-radius:50%;background:var(--muted);flex-shrink:0}
+.song-opt.active .sdot{background:#22c55e;box-shadow:0 0 8px #22c55e}
+.song-opt .sname{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media(max-width:480px){.screen{padding:18px 14px 80px}.card{padding:18px;border-radius:18px}.brand{top:10px;right:10px;font-size:10px;padding:6px 11px}}
+</style>
+</head><body>
+<div class="blob b1"></div><div class="blob b2"></div>
+<div class="brand">by <span>Zikri</span></div>
+
+<audio id="bgm" src="" loop preload="auto"></audio>
+
+<div class="music-wrap">
+  <button class="music-pick" onclick="toggleMusicPanel(event)">🎶</button>
+  <button class="music-btn" id="musicBtn" onclick="toggleMusic()">🎵</button>
+</div>
+<div class="music-panel" id="musicPanel">
+  <h4>Pilih Lagu</h4>
+  <div id="songList"></div>
+</div>
+
+<!-- HOME -->
+<div class="screen active" id="screen-home">
+  <div class="wrap hero">
+    <div class="logo">🧩</div>
+    <h1>Buat <span class="grad">Kuis Kamu</span><br>Sendiri</h1>
+    <p class="sub">Kuis dengan foto, musik, combo & leaderboard global 🌐</p>
+    <p class="byline">by <b>Zikri</b></p>
+    <button class="btn btn-primary" onclick="go('builder')">✨ Mulai Buat Kuis</button>
+    <button class="btn btn-ghost" onclick="loadDemoAndGo()">👀 Coba Kuis Contoh (5 soal)</button>
+    <div class="features">
+      <div class="feat"><div class="ico">📊</div><div class="t">Lihat Peserta</div></div>
+      <div class="feat"><div class="ico">🔥</div><div class="t">Combo Streak</div></div>
+      <div class="feat"><div class="ico">🎨</div><div class="t">Pilih Tema</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="screen" id="screen-builder">
+  <div class="wrap">
+    <div class="nav">
+      <button class="back" onclick="go('home')">←</button>
+      <h2>Dashboard Pembuat</h2>
+    </div>
+    <div id="fb-status"></div>
+    <div class="banner ok"><span>💡</span><span>Klik <b>"Isi Contoh Soal"</b> di bawah biar langsung ada 5 pertanyaan. Bisa diedit sesuai keinginan.</span></div>
+    <div class="card">
+      <div class="field">
+        <label class="label">Judul Kuis</label>
+        <input class="inp" id="in-title" placeholder="Contoh: Seberapa kenal kamu sama aku?" oninput="quiz.title=this.value">
+      </div>
+      <div class="field">
+        <label class="label">Nama Kamu</label>
+        <input class="inp" id="in-creator" placeholder="Nama kamu (buat leaderboard)" oninput="quiz.creator=this.value">
+      </div>
+      <div class="field">
+        <label class="label">Deskripsi (opsional)</label>
+        <textarea class="inp" id="in-desc" placeholder="Tulis pesan singkat..." oninput="quiz.desc=this.value"></textarea>
+      </div>
+      <div class="field" style="margin-bottom:0">
+        <label class="label">Tema Warna</label>
+        <div class="theme-grid" id="themeGrid"></div>
+      </div>
+    </div>
+    <div style="margin:20px 0 12px;display:flex;justify-content:space-between;align-items:center">
+      <h2 style="font-size:18px">Pertanyaan</h2>
+      <span class="hint" style="margin:0">✓ = tandai benar</span>
+    </div>
+    <div id="questionsWrap"></div>
+    <button class="btn btn-ghost" onclick="fillExample()" style="margin-bottom:10px;color:#86efac;border-color:rgba(34,197,94,.4)">🎯 Isi Contoh Soal (5 pertanyaan)</button>
+    <button class="btn btn-ghost" onclick="addQ()" style="margin-bottom:12px">＋ Tambah Pertanyaan Sendiri</button>
+    <button class="btn btn-primary" id="genBtn" onclick="generate()">🚀 Buat Link Kuis</button>
+    <button class="btn btn-ghost" onclick="openAnalytics()" style="margin-top:10px">📊 Lihat Peserta & Leaderboard</button>
+  </div>
+</div>
+
+<!-- ANALYTICS -->
+<div class="screen" id="screen-analytics">
+  <div class="wrap">
+    <div class="nav">
+      <button class="back" onclick="go('builder')">←</button>
+      <h2>Peserta Kuis</h2>
+    </div>
+    <div class="banner ok"><span>📊</span><span>Lihat siapa yang main, skornya, jawaban mana yang salah. Bisa hapus juga.</span></div>
+    <div id="an-stats"></div>
+    <div id="an-questions"></div>
+    <div id="an-list"><div class="spinner"></div></div>
+  </div>
+</div>
+
+<!-- SHARE -->
+<div class="screen" id="screen-share">
+  <div class="wrap">
+    <div class="nav">
+      <button class="back" onclick="go('builder')">←</button>
+      <h2>Link Siap Dikirim!</h2>
+    </div>
+    <div class="preview-card">
+      <span class="pemoji">🎉</span>
+      <div class="ptitle" id="pv-title">Judul Kuis</div>
+      <div class="pmeta" id="pv-meta">oleh Kamu • 0 pertanyaan</div>
+    </div>
+    <div class="card">
+      <div id="share-status"></div>
+      <label class="label">Link Kuis</label>
+      <div class="link-box">
+        <input id="share-link" readonly>
+        <button class="btn btn-primary btn-sm" onclick="copyLink()">Salin</button>
+      </div>
+      <div class="btn-row">
+        <a class="btn btn-ghost" id="wa-btn" target="_blank" rel="noopener">💬 WhatsApp</a>
+        <button class="btn btn-ghost" onclick="testQuiz()">👁️ Coba Kuis</button>
+      </div>
+      <p class="hint" style="margin-top:14px">Link ini udah bawa ID leaderboard. Semua yang buka link ini akan nulis ke <b>leaderboard yang sama</b> 🌐</p>
+    </div>
+  </div>
+</div>
+
+<!-- INPUT NAMA -->
+<div class="screen" id="screen-name">
+  <div class="wrap hero">
+    <div class="logo">👋</div>
+    <h1>Halo! Siapa <span class="grad">Namamu?</span></h1>
+    <p class="sub" id="name-quiz-title">Kuis: —</p>
+    <div class="card" style="margin-top:24px;text-align:left">
+      <label class="label">Nama Kamu</label>
+      <input class="inp" id="player-name" placeholder="Tulis namamu..." maxlength="24" onkeydown="if(event.key==='Enter')startFromName()">
+      <p class="hint" style="text-align:left;margin-top:8px">Namamu akan muncul di leaderboard global.</p>
+      <button class="btn btn-primary mt" onclick="startFromName()">▶️ Mulai Kuis</button>
+    </div>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div class="screen" id="screen-quiz">
+  <div class="wrap">
+    <div class="progress-wrap">
+      <div class="progress-top">
+        <span id="pg-label">Soal 1</span>
+        <span id="combo-slot"></span>
+        <span id="pg-pct">0%</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="pg-fill" style="width:0%"></div></div>
+    </div>
+    <div class="card">
+      <div style="font-size:13px;color:var(--muted);font-weight:700;margin-bottom:8px" id="quiz-by">oleh —</div>
+      <div id="q-img-wrap"></div>
+      <div class="q-text" id="q-text">Pertanyaan...</div>
+      <div class="choices" id="q-choices"></div>
+      <button class="btn btn-primary mt" id="next-btn" style="display:none" onclick="nextQ()">Lanjut →</button>
+    </div>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div class="screen" id="screen-result">
+  <div class="wrap">
+    <div class="result-head">
+      <div class="score-circle" id="score-circle" style="--p:0%">
+        <div class="score-inner">
+          <div class="score-num" id="score-num">0</div>
+          <div class="score-lbl">Skor</div>
+        </div>
+      </div>
+      <div class="verdict-emoji" id="vd-emoji">🎯</div>
+      <div class="verdict-title" id="vd-title">Hasil</div>
+      <div class="verdict-desc" id="vd-desc"></div>
+    </div>
+    <div class="card" style="margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:8px">
+        <h2 style="font-size:18px">🏆 Leaderboard Global</h2>
+        <button class="btn btn-ghost btn-sm" onclick="refreshLB()">🔄</button>
+      </div>
+      <div id="lb-list"><div class="spinner"></div></div>
+      <p class="hint" style="margin-top:8px" id="lb-note"></p>
+    </div>
+    <div class="card" id="review"></div>
+    <div class="card center" style="margin-top:14px">
+      <p style="font-size:14px;color:var(--muted);margin-bottom:12px">Mau bikin kuis kamu sendiri?</p>
+      <button class="btn btn-primary" onclick="resetAll()">✨ Buat Kuis Sendiri</button>
+      <p class="hint" style="margin-top:12px">by <b style="color:#fff">Zikri</b></p>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">✓</div><script>
+const SONGS = [
+  { name: 'Lagu Utama', url: 'https://cdn.imageurlgenerator.com/uploads/c213d04d-a313-4f3e-b093-f32a0d4c7e78.mp3' },
+  { name: 'Lagu Santai', url: 'https://mp3tourl.com/audio/1791036208079-7a6458ef-a164-410d-9f0e-a5092d6aaede.mp3' },
+  { name: 'Lagu Semangat', url: 'https://mp3tourl.com/audio/1791036441150-5a13f719-c8bd-4265-9614-a036aa07834d.mp3' }
+];
+let currentSong = 0;
+
+let quiz = { title:'', creator:'', desc:'', theme:'purple', questions:[ newQ() ] };
+let session = { quiz:null, idx:0, answers:[], combo:0, maxCombo:0, player:'', locked:false, bid:'', provider:'' };
+function newQ(){ return { q:'', options:['','','',''], correct:0, img:null }; }
+const THEMES = ['purple','sunset','ocean','forest','neon','mono'];
+
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function go(name){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+  window.scrollTo({top:0, behavior:'instant'});
+  closeMusicPanel();
+}
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('show'), 2200);
+}
+function encodeQuiz(obj){
+  const bytes = new TextEncoder().encode(JSON.stringify(obj));
+  let bin = ''; bytes.forEach(b => bin += String.fromCharCode(b));
+  return btoa(bin).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+}
+function decodeQuiz(str){
+  let s = str.replace(/-/g,'+').replace(/_/g,'/');
+  while (s.length % 4) s += '=';
+  const bin = atob(s);
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return JSON.parse(new TextDecoder().decode(bytes));
+}
+function hashQuiz(qz){
+  const s = (qz.title || '') + '|' + (qz.creator || '');
+  let h = 5381;
+  for (let i = 0; i < s.length; i++) h = ((h << 5) + h) ^ s.charCodeAt(i);
+  return 'q_' + (h >>> 0).toString(36);
+}
+function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+
+function applyTheme(name){
+  if (!THEMES.includes(name)) name = 'purple';
+  document.body.setAttribute('data-theme', name === 'purple' ? '' : name);
+}
+function renderThemePicker(){
+  document.getElementById('themeGrid').innerHTML = THEMES.map(t => `
+    <div class="theme-dot t-${t} ${quiz.theme===t?'active':''}" onclick="pickTheme('${t}')"></div>
+  `).join('');
+}
+function pickTheme(t){ quiz.theme = t; applyTheme(t); renderThemePicker(); }
+
+/* ===== MUSIK ===== */
+const bgm = () => document.getElementById('bgm');
+const musicBtn = () => document.getElementById('musicBtn');
+const musicPanel = () => document.getElementById('musicPanel');
+let musicReady = false;
+function renderSongList(){
+  document.getElementById('songList').innerHTML = SONGS.map((s, i) => `
+    <button class="song-opt ${i===currentSong?'active':''}" onclick="pickSong(${i})">
+      <span class="sdot"></span><span class="sname">${esc(s.name)}</span>
+    </button>`).join('');
+}
+function pickSong(i){
+  if (i === currentSong){ closeMusicPanel(); return; }
+  currentSong = i;
+  const a = bgm(); const wasPlaying = !a.paused;
+  a.src = SONGS[i].url; a.load();
+  if (wasPlaying || musicReady){
+    a.play().then(() => { musicBtn().classList.add('playing'); musicBtn().textContent = '🔊'; }).catch(() => {});
+  }
+  renderSongList(); toast('🎵 ' + SONGS[i].name); closeMusicPanel();
+}
+function toggleMusicPanel(e){ if (e) e.stopPropagation(); musicPanel().classList.toggle('open'); }
+function closeMusicPanel(){ musicPanel().classList.remove('open'); }
+document.addEventListener('click', (e) => {
+  if (!musicPanel().classList.contains('open')) return;
+  if (musicPanel().contains(e.target)) return;
+  if (e.target.closest('.music-pick')) return;
+  closeMusicPanel();
+});
+function toggleMusic(){
+  const a = bgm();
+  if (a.paused) a.play().then(() => { musicBtn().classList.add('playing'); musicBtn().textContent = '🔊'; musicReady = true; }).catch(() => {});
+  else { a.pause(); musicBtn().classList.remove('playing'); musicBtn().textContent = '🔇'; }
+}
+function tryAutoplay(){
+  const a = bgm();
+  if (!a.src) a.src = SONGS[currentSong].url;
+  a.volume = 0.4;
+  a.play().then(() => { musicReady = true; musicBtn().classList.add('playing'); musicBtn().textContent = '🔊'; }).catch(() => { musicBtn().textContent = '🎵'; });
+}
+document.addEventListener('click', function(){ if (!musicReady) tryAutoplay(); }, {once:false});
+
+/* ===== SFX ===== */
+let audioCtx = null;
+function getCtx(){
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+function playTing(){
+  try{ const ctx = getCtx(), now = ctx.currentTime;
+    [880, 1318.5].forEach((f, i) => {
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = 'sine'; o.frequency.setValueAtTime(f, now);
+      o.connect(g); g.connect(ctx.destination);
+      g.gain.setValueAtTime(0, now);
+      g.gain.linearRampToValueAtTime(0.15, now + 0.01 + i*0.05);
+      g.gain.exponentialRampToValueAtTime(0.001, now + 0.3 + i*0.05);
+      o.start(now + i*0.05); o.stop(now + 0.4 + i*0.05);
+    });
+  }catch(e){}
+}
+function playBuzz(){
+  try{ const ctx = getCtx(), now = ctx.currentTime;
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = 'sawtooth'; o.frequency.setValueAtTime(140, now);
+    o.frequency.exponentialRampToValueAtTime(70, now + 0.22);
+    o.connect(g); g.connect(ctx.destination);
+    g.gain.setValueAtTime(0.1, now);
+    g.gain.exponentialRampToValueAtTime(0.001, now + 0.26);
+    o.start(now); o.stop(now + 0.26);
+  }catch(e){}
+}
+function playCombo(){
+  try{ const ctx = getCtx(), now = ctx.currentTime;
+    [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => {
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = 'triangle'; o.frequency.setValueAtTime(f, now + i*0.055);
+      o.connect(g); g.connect(ctx.destination);
+      g.gain.setValueAtTime(0, now + i*0.055);
+      g.gain.linearRampToValueAtTime(0.13, now + i*0.055 + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.001, now + i*0.055 + 0.18);
+      o.start(now + i*0.055); o.stop(now + i*0.055 + 0.22);
+    });
+  }catch(e){}
+}
+
+/* ===== FOTO ===== */
+function resizeImage(file, maxDim = 600, quality = 0.7){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = new Image();
+      img.onload = () => {
+        let { width, height } = img;
+        if (width > height && width > maxDim){ height = height * maxDim / width; width = maxDim; }
+        else if (height > maxDim){ width = width * maxDim / height; height = maxDim; }
+        const canvas = document.createElement('canvas');
+        canvas.width = width; canvas.height = height;
+        canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.onerror = reject;
+      img.src = e.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+function pickImage(qi){
+  const input = document.createElement('input');
+  input.type = 'file'; input.accept = 'image/*';
+  input.onchange = async () => {
+    const file = input.files[0]; if (!file) return;
+    if (file.size > 8 * 1024 * 1024) return toast('⚠️ Foto maksimal 8MB');
+    try {
+      const data = await resizeImage(file);
+      quiz.questions[qi].img = data;
+      renderBuilder(); toast('✓ Foto ditambahkan');
+    } catch(e){ toast('⚠️ Gagal load foto'); }
+  };
+  input.click();
+}
+function removeImage(qi){ quiz.questions[qi].img = null; renderBuilder(); }<script>
+const SONGS = [
+  { name: 'Lagu Utama', url: 'https://cdn.imageurlgenerator.com/uploads/c213d04d-a313-4f3e-b093-f32a0d4c7e78.mp3' },
+  { name: 'Lagu Santai', url: 'https://mp3tourl.com/audio/1791036208079-7a6458ef-a164-410d-9f0e-a5092d6aaede.mp3' },
+  { name: 'Lagu Semangat', url: 'https://mp3tourl.com/audio/1791036441150-5a13f719-c8bd-4265-9614-a036aa07834d.mp3' }
+];
+let currentSong = 0;
+
+let quiz = { title:'', creator:'', desc:'', theme:'purple', questions:[ newQ() ] };
+let session = { quiz:null, idx:0, answers:[], combo:0, maxCombo:0, player:'', locked:false, bid:'', provider:'' };
+function newQ(){ return { q:'', options:['','','',''], correct:0, img:null }; }
+const THEMES = ['purple','sunset','ocean','forest','neon','mono'];
+
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function go(name){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+  window.scrollTo({top:0, behavior:'instant'});
+  closeMusicPanel();
+}
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('show'), 2200);
+}
+function encodeQuiz(obj){
+  const bytes = new TextEncoder().encode(JSON.stringify(obj));
+  let bin = ''; bytes.forEach(b => bin += String.fromCharCode(b));
+  return btoa(bin).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+}
+function decodeQuiz(str){
+  let s = str.replace(/-/g,'+').replace(/_/g,'/');
+  while (s.length % 4) s += '=';
+  const bin = atob(s);
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return JSON.parse(new TextDecoder().decode(bytes));
+}
+function hashQuiz(qz){
+  const s = (qz.title || '') + '|' + (qz.creator || '');
+  let h = 5381;
+  for (let i = 0; i < s.length; i++) h = ((h << 5) + h) ^ s.charCodeAt(i);
+  return 'q_' + (h >>> 0).toString(36);
+}
+function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+
+function applyTheme(name){
+  if (!THEMES.includes(name)) name = 'purple';
+  document.body.setAttribute('data-theme', name === 'purple' ? '' : name);
+}
+function renderThemePicker(){
+  document.getElementById('themeGrid').innerHTML = THEMES.map(t => `
+    <div class="theme-dot t-${t} ${quiz.theme===t?'active':''}" onclick="pickTheme('${t}')"></div>
+  `).join('');
+}
+function pickTheme(t){ quiz.theme = t; applyTheme(t); renderThemePicker(); }
+
+/* ===== MUSIK ===== */
+const bgm = () => document.getElementById('bgm');
+const musicBtn = () => document.getElementById('musicBtn');
+const musicPanel = () => document.getElementById('musicPanel');
+let musicReady = false;
+function renderSongList(){
+  document.getElementById('songList').innerHTML = SONGS.map((s, i) => `
+    <button class="song-opt ${i===currentSong?'active':''}" onclick="pickSong(${i})">
+      <span class="sdot"></span><span class="sname">${esc(s.name)}</span>
+    </button>`).join('');
+}
+function pickSong(i){
+  if (i === currentSong){ closeMusicPanel(); return; }
+  currentSong = i;
+  const a = bgm(); const wasPlaying = !a.paused;
+  a.src = SONGS[i].url; a.load();
+  if (wasPlaying || musicReady){
+    a.play().then(() => { musicBtn().classList.add('playing'); musicBtn().textContent = '🔊'; }).catch(() => {});
+  }
+  renderSongList(); toast('🎵 ' + SONGS[i].name); closeMusicPanel();
+}
+function toggleMusicPanel(e){ if (e) e.stopPropagation(); musicPanel().classList.toggle('open'); }
+function closeMusicPanel(){ musicPanel().classList.remove('open'); }
+document.addEventListener('click', (e) => {
+  if (!musicPanel().classList.contains('open')) return;
+  if (musicPanel().contains(e.target)) return;
+  if (e.target.closest('.music-pick')) return;
+  closeMusicPanel();
+});
+function toggleMusic(){
+  const a = bgm();
+  if (a.paused) a.play().then(() => { musicBtn().classList.add('playing'); musicBtn().textContent = '🔊'; musicReady = true; }).catch(() => {});
+  else { a.pause(); musicBtn().classList.remove('playing'); musicBtn().textContent = '🔇'; }
+}
+function tryAutoplay(){
+  const a = bgm();
+  if (!a.src) a.src = SONGS[currentSong].url;
+  a.volume = 0.4;
+  a.play().then(() => { musicReady = true; musicBtn().classList.add('playing'); musicBtn().textContent = '🔊'; }).catch(() => { musicBtn().textContent = '🎵'; });
+}
+document.addEventListener('click', function(){ if (!musicReady) tryAutoplay(); }, {once:false});
+
+/* ===== SFX ===== */
+let audioCtx = null;
+function getCtx(){
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+function playTing(){
+  try{ const ctx = getCtx(), now = ctx.currentTime;
+    [880, 1318.5].forEach((f, i) => {
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = 'sine'; o.frequency.setValueAtTime(f, now);
+      o.connect(g); g.connect(ctx.destination);
+      g.gain.setValueAtTime(0, now);
+      g.gain.linearRampToValueAtTime(0.15, now + 0.01 + i*0.05);
+      g.gain.exponentialRampToValueAtTime(0.001, now + 0.3 + i*0.05);
+      o.start(now + i*0.05); o.stop(now + 0.4 + i*0.05);
+    });
+  }catch(e){}
+}
+function playBuzz(){
+  try{ const ctx = getCtx(), now = ctx.currentTime;
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = 'sawtooth'; o.frequency.setValueAtTime(140, now);
+    o.frequency.exponentialRampToValueAtTime(70, now + 0.22);
+    o.connect(g); g.connect(ctx.destination);
+    g.gain.setValueAtTime(0.1, now);
+    g.gain.exponentialRampToValueAtTime(0.001, now + 0.26);
+    o.start(now); o.stop(now + 0.26);
+  }catch(e){}
+}
+function playCombo(){
+  try{ const ctx = getCtx(), now = ctx.currentTime;
+    [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => {
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = 'triangle'; o.frequency.setValueAtTime(f, now + i*0.055);
+      o.connect(g); g.connect(ctx.destination);
+      g.gain.setValueAtTime(0, now + i*0.055);
+      g.gain.linearRampToValueAtTime(0.13, now + i*0.055 + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.001, now + i*0.055 + 0.18);
+      o.start(now + i*0.055); o.stop(now + i*0.055 + 0.22);
+    });
+  }catch(e){}
+}
+
+/* ===== FOTO ===== */
+function resizeImage(file, maxDim = 600, quality = 0.7){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = new Image();
+      img.onload = () => {
+        let { width, height } = img;
+        if (width > height && width > maxDim){ height = height * maxDim / width; width = maxDim; }
+        else if (height > maxDim){ width = width * maxDim / height; height = maxDim; }
+        const canvas = document.createElement('canvas');
+        canvas.width = width; canvas.height = height;
+        canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.onerror = reject;
+      img.src = e.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+function pickImage(qi){
+  const input = document.createElement('input');
+  input.type = 'file'; input.accept = 'image/*';
+  input.onchange = async () => {
+    const file = input.files[0]; if (!file) return;
+    if (file.size > 8 * 1024 * 1024) return toast('⚠️ Foto maksimal 8MB');
+    try {
+      const data = await resizeImage(file);
+      quiz.questions[qi].img = data;
+      renderBuilder(); toast('✓ Foto ditambahkan');
+    } catch(e){ toast('⚠️ Gagal load foto'); }
+  };
+  input.click();
+}
+function removeImage(qi){ quiz.questions[qi].img = null; renderBuilder(); }/* =========================================================
+   💾 STORAGE DUAL-API — jsonblob.com + extendsclass.com
+   Kalau satu gagal, otomatis coba yang lain. Kalau dua-duanya
+   gagal, fallback ke localStorage.
+   ========================================================= */
+
+async function tryCreateJsonblob(data){
+  try {
+    const r = await fetch('https://jsonblob.com/api/jsonBlob', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    if (!r.ok) return null;
+    let id = r.headers.get('X-jsonblob') || r.headers.get('x-jsonblob');
+    if (!id){
+      const loc = r.headers.get('Location') || r.headers.get('location');
+      if (loc) id = loc.split('/').pop();
+    }
+    if (id) return { provider: 'jsonblob', id };
+  } catch(e){ console.warn('jsonblob create fail:', e); }
+  return null;
+}
+
+async function tryCreateExtendsclass(data){
+  try {
+    const r = await fetch('https://extendsclass.com/api/json-storage/bin', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    if (!r.ok) return null;
+    const d = await r.json();
+    if (d && d.id) return { provider: 'extendsclass', id: d.id };
+  } catch(e){ console.warn('extendsclass create fail:', e); }
+  return null;
+}
+
+async function storageCreate(data){
+  // coba berurutan
+  const a = await tryCreateJsonblob(data);
+  if (a) return a;
+  const b = await tryCreateExtendsclass(data);
+  if (b) return b;
+  return null;
+}
+
+async function storageRead(provider, id){
+  if (!provider || !id) return null;
+  const url = provider === 'jsonblob'
+    ? `https://jsonblob.com/api/jsonBlob/${id}`
+    : `https://extendsclass.com/api/json-storage/bin/${id}`;
+  try {
+    const r = await fetch(url, { headers: { 'Accept': 'application/json' } });
+    if (!r.ok) return null;
+    const d = await r.json();
+    return Array.isArray(d) ? d : null;
+  } catch(e){ return null; }
+}
+
+async function storageWrite(provider, id, list){
+  if (!provider || !id) return false;
+  const url = provider === 'jsonblob'
+    ? `https://jsonblob.com/api/jsonBlob/${id}`
+    : `https://extendsclass.com/api/json-storage/bin/${id}`;
+  try {
+    const r = await fetch(url, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(list)
+    });
+    return r.ok;
+  } catch(e){ return false; }
+}
+
+/* ===== SIMPAN META (di browser pembuat) ===== */
+function saveMeta(clean, storage, link){
+  try {
+    const key = hashQuiz(clean);
+    const meta = {
+      title: clean.title, creator: clean.creator, theme: clean.theme,
+      questions: clean.questions.map(q => ({ q: q.q, options: q.options, correct: q.correct })),
+      provider: storage?.provider || '',
+      binId: storage?.id || '',
+      link, createdAt: Date.now()
+    };
+    localStorage.setItem('meta_' + key, JSON.stringify(meta));
+    localStorage.setItem('meta_last', key);
+  } catch(e){ toast('⚠️ Gagal simpan meta'); }
+}
+function getLastMeta(){
+  try {
+    const key = localStorage.getItem('meta_last');
+    if (!key) return null;
+    return JSON.parse(localStorage.getItem('meta_' + key) || 'null');
+  } catch(e){ return null; }
+}
+
+/* ===== BUILDER ===== */
+function renderBuilder(){
+  renderThemePicker();
+  const status = document.getElementById('fb-status');
+  const meta = getLastMeta();
+  if (meta){
+    status.innerHTML = `<div class="banner ok"><span>📊</span><span>Kuis terakhir: <b>${esc(meta.title)}</b> — klik <b>Lihat Peserta</b> buat lihat hasilnya.</span></div>`;
+  } else {
+    status.innerHTML = '';
+  }
+  const wrap = document.getElementById('questionsWrap');
+  wrap.innerHTML = quiz.questions.map((q, qi) => `
+    <div class="qcard">
+      <div class="qhead">
+        <span class="num">Pertanyaan ${qi + 1}</span>
+        ${quiz.questions.length > 1 ? `<button class="btn-x" onclick="removeQ(${qi})">✕</button>` : ''}
+      </div>
+      <input class="inp" placeholder="Tulis pertanyaan..." value="${esc(q.q)}" oninput="quiz.questions[${qi}].q = this.value">
+      <div class="img-tools">
+        <button class="img-btn ${q.img ? 'has' : ''}" onclick="pickImage(${qi})">${q.img ? '🖼️ Ganti Foto' : '📷 Tambah Foto (opsional)'}</button>
+      </div>
+      ${q.img ? `<div class="img-preview"><img src="${q.img}"><button class="rm" onclick="removeImage(${qi})">✕</button></div>` : ''}
+      <div class="opts">
+        ${q.options.map((o, oi) => `
+          <div class="opt-row">
+            <button class="check ${q.correct === oi ? 'active' : ''}" onclick="setCorrect(${qi},${oi})">${q.correct === oi ? '✓' : ''}</button>
+            <input class="inp" placeholder="Opsi ${oi + 1}" value="${esc(o)}" oninput="quiz.questions[${qi}].options[${oi}] = this.value">
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+function addQ(){
+  if (quiz.questions.length >= 20) return toast('Maksimal 20 pertanyaan');
+  quiz.questions.push(newQ()); renderBuilder();
+  setTimeout(() => { const c = document.querySelectorAll('.qcard'); c[c.length-1].scrollIntoView({behavior:'smooth',block:'center'}); }, 50);
+}
+function removeQ(i){ quiz.questions.splice(i, 1); renderBuilder(); }
+function setCorrect(qi, oi){ quiz.questions[qi].correct = oi; renderBuilder(); }
+
+/* ===== FILL EXAMPLE ===== */
+function fillExample(){
+  if (quiz.questions.some(q => q.q.trim() || q.options.some(o => o.trim()))){
+    if (!confirm('Isi contoh akan menimpa soal yang ada. Lanjut?')) return;
+  }
+  quiz.title = 'Seberapa Kenal Kamu Sama Aku?';
+  if (!quiz.creator) quiz.creator = 'Zikri';
+  quiz.desc = 'Jawab 5 pertanyaan ini dan lihat seberapa dekat kamu sama aku 👀';
+  quiz.questions = [
+    { q:'Apa makanan favorit aku?', options:['Nasi Goreng','Mie Ayam','Sushi','Bakso'], correct:1, img:null },
+    { q:'Kapan ulang tahun aku?', options:['12 Januari','3 Maret','27 Agustus','9 Desember'], correct:2, img:null },
+    { q:'Aku paling takut sama apa?', options:['Ketinggian','Kucing','Gelap','Ketinggalan momen'], correct:3, img:null },
+    { q:'Hobi aku yang paling sering?', options:['Main game','Dengerin musik','Baca buku','Olahraga'], correct:1, img:null },
+    { q:'Kalau aku sedih, aku biasanya...', options:['Diam aja','Cari teman','Tidur','Makan banyak'], correct:0, img:null }
+  ];
+  document.getElementById('in-title').value = quiz.title;
+  document.getElementById('in-creator').value = quiz.creator;
+  document.getElementById('in-desc').value = quiz.desc;
+  renderBuilder();
+  toast('✓ Contoh soal dimuat — tinggal edit sesuai keinginan!');
+}
+
+/* ===== GENERATE LINK (dual server + retry) ===== */
+async function generate(){
+  if (!quiz.title.trim()) return toast('⚠️ Isi judul kuis dulu');
+  if (!quiz.creator.trim()) return toast('⚠️ Isi nama kamu dulu');
+  for (let i = 0; i < quiz.questions.length; i++){
+    const q = quiz.questions[i];
+    if (!q.q.trim()) return toast(`⚠️ Pertanyaan ${i+1} masih kosong`);
+    if (q.options.filter(o => o.trim()).length < 2) return toast(`⚠️ Pertanyaan ${i+1} butuh minimal 2 opsi`);
+    if (!q.options[q.correct] || !q.options[q.correct].trim()) return toast(`⚠️ Tandai jawaban benar di pertanyaan ${i+1}`);
+  }
+
+  const btn = document.getElementById('genBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Membuat leaderboard...';
+
+  const clean = {
+    title: quiz.title.trim(), creator: quiz.creator.trim(), desc: quiz.desc.trim(),
+    theme: quiz.theme || 'purple',
+    questions: quiz.questions.map(q => {
+      const opts = q.options.map(o => o.trim()).filter(Boolean);
+      const correctText = q.options[q.correct].trim();
+      let correct = opts.indexOf(correctText); if (correct < 0) correct = 0;
+      const out = { q: q.q.trim(), options: opts, correct };
+      if (q.img) out.img = q.img;
+      return out;
+    })
+  };
+
+  // Bikin bin di server (coba 2x)
+  let storage = null;
+  for (let attempt = 1; attempt <= 2 && !storage; attempt++){
+    storage = await storageCreate([{
+      __init: true,
+      title: clean.title,
+      creator: clean.creator,
+      createdAt: Date.now()
+    }]);
+    if (!storage && attempt === 1){
+      btn.textContent = '⏳ Coba server lain...';
+      await new Promise(r => setTimeout(r, 800));
+    }
+  }
+
+  const encoded = encodeQuiz(clean);
+  const base = location.origin + location.pathname;
+  const link = storage
+    ? `${base}#q=${encoded}&bid=${storage.id}&p=${storage.provider}`
+    : `${base}#q=${encoded}`;
+
+  document.getElementById('share-link').value = link;
+  document.getElementById('pv-title').textContent = clean.title;
+  document.getElementById('pv-meta').textContent = `oleh ${clean.creator} • ${clean.questions.length} pertanyaan`;
+
+  const statusEl = document.getElementById('share-status');
+  if (storage){
+    statusEl.innerHTML = `<div class="banner ok"><span>🌐</span><span>Leaderboard <b>GLOBAL</b> siap! Peserta yang buka link ini akan muncul di leaderboard kamu.</span></div>`;
+  } else {
+    statusEl.innerHTML = `<div class="banner err"><span>⚠️</span><span>Server tidak kejangkau. Coba klik "Buat Link Kuis" lagi 5 detik lagi. Sementara skor cuma tersimpan lokal.</span></div>`;
+  }
+
+  const waText = encodeURIComponent(`🧩 Aku bikin kuis nih: "${clean.title}"\n\nCoba kerjakan ya 👇\n${link}`);
+  document.getElementById('wa-btn').href = `https://wa.me/?text=${waText}`;
+
+  saveMeta(clean, storage, link);
+
+  btn.disabled = false;
+  btn.textContent = '🚀 Buat Link Kuis';
+  go('share');
+}
+function copyLink(){
+  const inp = document.getElementById('share-link');
+  const done = () => toast('✓ Link disalin!');
+  if (navigator.clipboard && window.isSecureContext){
+    navigator.clipboard.writeText(inp.value).then(done).catch(() => { inp.select(); document.execCommand('copy'); done(); });
+  } else { inp.select(); inp.setSelectionRange(0,99999); document.execCommand('copy'); done(); }
+}/* ===== QUIZ FLOW ===== */
+function startQuiz(data, bid, provider, fromName){
+  session = {
+    quiz: data, idx: 0, answers: [], combo: 0, maxCombo: 0,
+    player: fromName ? session.player : '', locked: false,
+    bid: bid || '', provider: provider || ''
+  };
+  applyTheme(data.theme || 'purple');
+  go('quiz'); renderQuestion();
+}
+function startFromName(){
+  const name = (document.getElementById('player-name').value || '').trim();
+  if (name.length < 2) return toast('⚠️ Nama minimal 2 huruf');
+  session.player = name.slice(0, 24);
+  startQuiz(session.quiz, session.bid, session.provider, true);
+}
+function renderQuestion(){
+  const { quiz: qz, idx, player } = session;
+  const q = qz.questions[idx], total = qz.questions.length;
+  const pct = Math.round((idx / total) * 100);
+  document.getElementById('pg-label').textContent = `Soal ${idx + 1}/${total} • ${player}`;
+  document.getElementById('pg-pct').textContent = pct + '%';
+  document.getElementById('pg-fill').style.width = pct + '%';
+  document.getElementById('quiz-by').textContent = `Kuis oleh ${qz.creator}`;
+  document.getElementById('combo-slot').innerHTML = session.combo >= 2
+    ? `<span class="combo-tag">🔥 x${session.combo}</span>` : '';
+  document.getElementById('q-img-wrap').innerHTML = q.img ? `<div class="q-img"><img src="${q.img}"></div>` : '';
+  document.getElementById('q-text').textContent = q.q;
+  const letters = ['A','B','C','D','E','F'];
+  document.getElementById('q-choices').innerHTML = q.options.map((o, i) => `
+    <button class="choice" onclick="pick(${i})">
+      <span class="badge">${letters[i]||i+1}</span><span>${esc(o)}</span>
+    </button>`).join('');
+  document.getElementById('next-btn').style.display = 'none';
+  document.getElementById('next-btn').textContent = (idx === total - 1) ? 'Lihat Hasil 🎉' : 'Lanjut →';
+  session.locked = false;
+}
+function pick(i){
+  if (session.locked) return;
+  session.locked = true;
+  session.answers[session.idx] = i;
+  const q = session.quiz.questions[session.idx];
+  const ok = i === q.correct;
+  document.querySelectorAll('.choice').forEach((el, k) => {
+    el.classList.add('locked');
+    if (k === i) el.classList.add(ok ? 'correct' : 'wrong');
+    if (!ok && k === q.correct) setTimeout(() => el.classList.add('correct'), 200);
+    if (k !== i && k !== q.correct) el.style.opacity = '.4';
+  });
+  if (ok){
+    playTing();
+    session.combo++;
+    if (session.combo > session.maxCombo) session.maxCombo = session.combo;
+    if (session.combo === 3){ playCombo(); showFX('🔥 COMBO x3!'); }
+    else if (session.combo > 3 && session.combo % 3 === 0){ playCombo(); showFX(`⚡ x${session.combo}!`); }
+    else showFX(pickEmoji());
+  } else {
+    playBuzz();
+    session.combo = 0;
+    showFX('💔');
+  }
+  document.getElementById('combo-slot').innerHTML = session.combo >= 2
+    ? `<span class="combo-tag">🔥 x${session.combo}</span>` : '';
+  document.getElementById('next-btn').style.display = 'inline-flex';
+}
+function pickEmoji(){
+  const pool = ['🎉','✨','🌟','💫','🎊','⭐','🥳','🌈'];
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+function showFX(text){
+  const el = document.createElement('div');
+  el.className = 'fx-emoji'; el.textContent = text;
+  if (text.length > 3){ el.style.fontSize = '30px'; el.style.fontWeight = '800'; }
+  el.style.left = (window.innerWidth / 2 + (Math.random() - .5) * 100) + 'px';
+  el.style.top = (window.innerHeight / 2 + (Math.random() - .5) * 70) + 'px';
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 1050);
+}
+function nextQ(){
+  if (session.answers[session.idx] === undefined) return;
+  if (session.idx < session.quiz.questions.length - 1){
+    session.idx++; renderQuestion();
+    window.scrollTo({top:0, behavior:'smooth'});
+  } else showResult();
+}
+
+/* ===== HASIL ===== */
+function getVerdict(pct){
+  if (pct === 100) return { e:'🏆', t:'Sempurna!', d:'Semua benar. Luar biasa!' };
+  if (pct >= 80)   return { e:'🌟', t:'Keren Banget!', d:'Hampir sempurna. Kamu jago!' };
+  if (pct >= 60)   return { e:'💪', t:'Bagus!', d:'Lumayan paham. Dikit lagi sempurna!' };
+  if (pct >= 40)   return { e:'🤔', t:'Lumayan...', d:'Masih ada yang salah, tapi oke.' };
+  if (pct >= 20)   return { e:'😅', t:'Waduh...', d:'Perlu coba lagi nih.' };
+  return { e:'💀', t:'Yah...', d:'Kayaknya belum kenal sama sekali 😂' };
+}
+async function showResult(){
+  const { quiz: qz, answers, player, maxCombo, bid, provider } = session;
+  const total = qz.questions.length;
+  let correct = 0;
+  qz.questions.forEach((q, i) => { if (answers[i] === q.correct) correct++; });
+  const pct = Math.round((correct / total) * 100);
+  const v = getVerdict(pct);
+  document.getElementById('score-circle').style.setProperty('--p', pct + '%');
+  document.getElementById('score-num').textContent = pct + '%';
+  document.getElementById('vd-emoji').textContent = v.e;
+  document.getElementById('vd-title').textContent = v.t;
+  document.getElementById('vd-desc').textContent = v.d + ` (${correct}/${total} benar • combo max x${maxCombo})`;
+  document.getElementById('review').innerHTML = qz.questions.map((q, i) => {
+    const ok = answers[i] === q.correct;
+    const yourAns = q.options[answers[i]] ?? '(tidak dijawab)';
+    const correctAns = q.options[q.correct] ?? '-';
+    return `<div class="review-item">
+      <div class="mark ${ok?'ok':'no'}">${ok?'✓':'✕'}</div>
+      <div style="flex:1">
+        <div class="rq">${esc(q.q)}</div>
+        <div class="ra">Jawabanmu: <strong style="color:${ok?'#4ade80':'#f87171'}">${esc(yourAns)}</strong>${ok?'':`<br>Yang benar: <strong style="color:#4ade80">${esc(correctAns)}</strong>`}</div>
+        ${q.img ? `<div class="rimg"><img src="${q.img}"></div>` : ''}
+      </div></div>`;
+  }).join('');
+  go('result');
+  document.getElementById('lb-list').innerHTML = '<div class="spinner"></div>';
+  document.getElementById('lb-note').textContent = 'Mengirim skor...';
+
+  const entry = {
+    id: uid(), name: player, pct, correct, total, combo: maxCombo,
+    time: Date.now(), answers: session.answers.slice()
+  };
+
+  // Baca dulu, lalu tambah, lalu tulis
+  let success = false;
+  if (bid && provider){
+    let list = await storageRead(provider, bid);
+    if (!list) list = [];
+    // buang entry "init" kalau ada
+    list = list.filter(e => !e.__init);
+    list.push(entry);
+    success = await storageWrite(provider, bid, list);
+  }
+
+  // fallback lokal — tetap simpan biar kelihatan di device sendiri
+  try {
+    const key = 'lb_local_' + (bid || 'nobin');
+    const local = JSON.parse(localStorage.getItem(key) || '[]');
+    if (!local.some(e => e.id === entry.id)) local.push(entry);
+    localStorage.setItem(key, JSON.stringify(local));
+  } catch(e){}
+
+  document.getElementById('lb-note').textContent = success
+    ? '🌐 Skor terkirim ke leaderboard global!'
+    : '⚠️ Mode lokal — skor tetap tersimpan di device ini.';
+
+  await renderLeaderboard(player);
+}
+async function renderLeaderboard(currentName){
+  const list = await loadAllEntries();
+  const el = document.getElementById('lb-list');
+  if (!list.length){
+    el.innerHTML = `<p class="hint">Belum ada yang selesai. Kamu yang pertama! 🎉</p>`;
+    return;
+  }
+  const top = list.slice(0, 10);
+  const icons = ['🥇','🥈','🥉'];
+  el.innerHTML = top.map((e, i) => {
+    const isMe = e.name === currentName;
+    const rankCls = i < 3 ? 'g' + (i+1) : '';
+    return `<div class="lb-row ${isMe?'me':''}">
+      <div class="lb-rank ${rankCls}">${i < 3 ? icons[i] : (i+1)}</div>
+      <div class="lb-name">${esc(e.name)}${isMe ? ' <span style="font-size:10px;color:var(--accent3);font-weight:800">(KAMU)</span>' : ''}
+        <div class="lb-meta">${e.correct}/${e.total} benar • combo x${e.combo} • ${timeAgo(e.time)}</div>
+      </div>
+      <div class="lb-score">${e.pct}%</div>
+    </div>`;
+  }).join('');
+  const meIdx = list.findIndex(e => e.name === currentName);
+  if (meIdx >= 10){
+    const me = list[meIdx];
+    el.innerHTML += `<div style="text-align:center;color:var(--muted);font-size:12px;margin:6px 0">•••</div>
+      <div class="lb-row me">
+        <div class="lb-rank">${meIdx+1}</div>
+        <div class="lb-name">${esc(me.name)} <span style="font-size:10px;color:var(--accent3);font-weight:800">(KAMU)</span>
+          <div class="lb-meta">${me.correct}/${me.total} benar • combo x${me.combo} • ${timeAgo(me.time)}</div>
+        </div>
+        <div class="lb-score">${me.pct}%</div>
+      </div>`;
+  }
+}
+async function loadAllEntries(){
+  // gabung dari server + lokal
+  let serverList = [];
+  if (session.bid && session.provider){
+    serverList = (await storageRead(session.provider, session.bid)) || [];
+  }
+  let localList = [];
+  try {
+    localList = JSON.parse(localStorage.getItem('lb_local_' + (session.bid || 'nobin')) || '[]');
+  } catch(e){}
+
+  // merge by id
+  const map = new Map();
+  serverList.filter(e => !e.__init).forEach(e => map.set(e.id || (e.name + '|' + e.time), e));
+  localList.forEach(e => {
+    const k = e.id || (e.name + '|' + e.time);
+    if (!map.has(k)) map.set(k, e);
+  });
+  const all = Array.from(map.values());
+  all.sort((a,b) => b.pct - a.pct || b.combo - a.combo || a.time - b.time);
+  return all;
+}
+async function refreshLB(){
+  document.getElementById('lb-list').innerHTML = '<div class="spinner"></div>';
+  await renderLeaderboard(session.player);
+  toast('✓ Leaderboard di-refresh');
+}
+function timeAgo(ts){
+  const s = Math.floor((Date.now() - ts) / 1000);
+  if (s < 60) return 'baru aja';
+  if (s < 3600) return Math.floor(s/60) + 'm lalu';
+  if (s < 86400) return Math.floor(s/3600) + 'j lalu';
+  return Math.floor(s/86400) + 'h lalu';
+}
+
+/* ===== ANALYTICS ===== */
+async function openAnalytics(){
+  const meta = getLastMeta();
+  if (!meta) return toast('⚠️ Belum ada kuis yang dibuat');
+  go('analytics');
+  document.getElementById('an-list').innerHTML = '<div class="spinner"></div>';
+  document.getElementById('an-stats').innerHTML = '';
+  document.getElementById('an-questions').innerHTML = '';
+  await renderAnalytics(meta);
+}
+async function renderAnalytics(meta){
+  const listEl = document.getElementById('an-list');
+  const statsEl = document.getElementById('an-stats');
+  const qEl = document.getElementById('an-questions');
+
+  let list = [];
+  if (meta.provider && meta.binId){
+    try {
+      list = (await storageRead(meta.provider, meta.binId)) || [];
+      list = list.filter(e => !e.__init);
+    } catch(e){ list = []; }
+  }
+  // merge lokal
+  try {
+    const local = JSON.parse(localStorage.getItem('lb_local_' + (meta.binId || 'nobin')) || '[]');
+    const map = new Map();
+    list.forEach(e => map.set(e.id || (e.name + '|' + e.time), e));
+    local.forEach(e => { const k = e.id || (e.name + '|' + e.time); if (!map.has(k)) map.set(k, e); });
+    list = Array.from(map.values());
+  } catch(e){}
+  list.sort((a,b) => b.pct - a.pct || b.combo - a.combo || a.time - b.time);
+
+  if (!list.length){
+    statsEl.innerHTML = '';
+    qEl.innerHTML = '';
+    listEl.innerHTML = `<div class="empty-state"><span class="e">📭</span>Belum ada yang main.<br>Kirim link ke temanmu dulu ya!</div>`;
+    return;
+  }
+
+  const avg = Math.round(list.reduce((s,e) => s + e.pct, 0) / list.length);
+  const best = list[0].pct;
+  statsEl.innerHTML = `
+    <div class="an-stat-row">
+      <div class="an-stat"><div class="n">${list.length}</div><div class="l">Peserta</div></div>
+      <div class="an-stat"><div class="n">${avg}%</div><div class="l">Rata-rata</div></div>
+      <div class="an-stat"><div class="n">${best}%</div><div class="l">Tertinggi</div></div>
+    </div>`;
+
+  const qStats = meta.questions.map((q, qi) => {
+    let wrong = 0, answered = 0;
+    list.forEach(e => {
+      if (Array.isArray(e.answers) && e.answers[qi] !== undefined){
+        answered++;
+        if (e.answers[qi] !== q.correct) wrong++;
+      }
+    });
+    const pctW = answered ? Math.round((wrong / answered) * 100) : 0;
+    return { wrong, answered, pctW, q: q.q };
+  });
+  qEl.innerHTML = `<div class="card" style="margin-bottom:14px">
+    <div style="font-size:13px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px">🔥 Soal Paling Sering Salah</div>
+    ${qStats.map((s, i) => `
+      <div class="qstat">
+        <div class="qt">${i+1}. ${esc(s.q || '(kosong)')}</div>
+        <div class="qb"><div class="qf" style="width:${s.pctW}%"></div></div>
+        <div class="qd">${s.wrong} dari ${s.answered} salah (${s.pctW}%)</div>
+      </div>`).join('')}
+  </div>`;
+
+  const icons = ['🥇','🥈','🥉'];
+  listEl.innerHTML = `<div style="font-size:13px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin:6px 0 10px">👥 Semua Peserta</div>` +
+    list.map((e, i) => {
+      const rankCls = i < 3 ? 'g' + (i+1) : '';
+      const detail = meta.questions.map((q, qi) => {
+        const userAns = Array.isArray(e.answers) ? e.answers[qi] : undefined;
+        if (userAns === undefined) return '';
+        const ok = userAns === q.correct;
+        const yourText = q.options[userAns] || '(kosong)';
+        const corrText = q.options[q.correct] || '-';
+        return `<div class="an-qa ${ok?'ok':'no'}">
+          <div class="mk">${ok?'✓':'✕'}</div>
+          <div style="flex:1">
+            <div class="q">${esc(q.q)}</div>
+            <div class="a">Jawab: <strong style="color:${ok?'#4ade80':'#f87171'}">${esc(yourText)}</strong>${ok?'':` • Benar: <strong style="color:#4ade80">${esc(corrText)}</strong>`}</div>
+          </div></div>`;
+      }).join('') || '<div class="hint" style="padding:10px 0">Detail jawaban gak tersedia.</div>';
+
+      return `<div class="an-row" id="an-${e.id||i}">
+        <div class="an-head" onclick="toggleAn('${e.id||i}')">
+          <div class="an-rank ${rankCls}">${i < 3 ? icons[i] : (i+1)}</div>
+          <div class="an-name">${esc(e.name)}
+            <div class="sub">${e.correct}/${e.total} benar • combo x${e.combo} • ${timeAgo(e.time)}</div>
+          </div>
+          <div class="an-score">${e.pct}%</div>
+          <div class="an-arrow">▼</div>
+        </div>
+        <div class="an-body">
+          <button class="an-btn danger" onclick="deleteEntry('${e.id||i}', event)">🗑️ Hapus Peserta Ini</button>
+          ${detail}
+        </div>
+      </div>`;
+    }).join('') + `
+    <button class="btn btn-ghost" onclick="clearAllEntries()" style="margin-top:14px;color:#fca5a5;border-color:rgba(239,68,68,.35)">🗑️ Hapus Semua Peserta</button>
+    <button class="btn btn-ghost" onclick="openAnalytics()" style="margin-top:10px">🔄 Refresh</button>`;
+}
+function toggleAn(id){
+  const el = document.getElementById('an-' + id);
+  if (el) el.classList.toggle('open');
+}
+async function deleteEntry(id, event){
+  if (event) event.stopPropagation();
+  if (!confirm('Hapus data peserta ini?')) return;
+  const meta = getLastMeta();
+  if (!meta) return;
+  try {
+    let list = [];
+    if (meta.provider && meta.binId){
+      list = (await storageRead(meta.provider, meta.binId)) || [];
+    }
+    list = list.filter(e => (e.id || '') !== id);
+    if (meta.provider && meta.binId){
+      await storageWrite(meta.provider, meta.binId, list);
+    }
+    // hapus lokal juga
+    try {
+      const key = 'lb_local_' + (meta.binId || 'nobin');
+      const local = JSON.parse(localStorage.getItem(key) || '[]');
+      localStorage.setItem(key, JSON.stringify(local.filter(e => (e.id || '') !== id)));
+    } catch(e){}
+    toast('🗑️ Peserta dihapus');
+    await renderAnalytics(meta);
+  } catch(e){ toast('⚠️ Gagal hapus'); }
+}
+async function clearAllEntries(){
+  if (!confirm('Hapus SEMUA peserta? Gak bisa dibalikin.')) return;
+  const meta = getLastMeta();
+  if (!meta) return;
+  try {
+    if (meta.provider && meta.binId){
+      await storageWrite(meta.provider, meta.binId, []);
+    }
+    localStorage.setItem('lb_local_' + (meta.binId || 'nobin'), '[]');
+    toast('🗑️ Semua peserta dihapus');
+    await renderAnalytics(meta);
+  } catch(e){ toast('⚠️ Gagal hapus'); }
+}
+
+/* ===== MISC ===== */
+function testQuiz(){
+  const meta = getLastMeta();
+  const hash = location.hash.length > 1 ? location.hash.slice(1) : '';
+  const shareVal = document.getElementById('share-link').value;
+  const url = shareVal || location.href;
+  const paramStr = url.split('#')[1] || '';
+  const params = new URLSearchParams(paramStr);
+  const qEnc = params.get('q');
+  const bid = params.get('bid') || '';
+  const p = params.get('p') || '';
+  if (!qEnc) return toast('⚠️ Buat link dulu');
+  try { openNameScreen(decodeQuiz(qEnc), bid, p); } catch(e){ toast('⚠️ Gagal buka kuis'); }
+}
+function openNameScreen(data, bid, provider){
+  session.quiz = data;
+  session.bid = bid || '';
+  session.provider = provider || '';
+  applyTheme(data.theme || 'purple');
+  document.getElementById('name-quiz-title').textContent = `Kuis: "${data.title}" oleh ${data.creator}`;
+  document.getElementById('player-name').value = '';
+  go('name');
+  setTimeout(() => document.getElementById('player-name').focus(), 350);
+}
+function resetAll(){
+  history.replaceState(null, '', location.pathname);
+  quiz = { title:'', creator:'', desc:'', theme:'purple', questions:[ newQ() ] };
+  document.getElementById('in-title').value = '';
+  document.getElementById('in-creator').value = '';
+  document.getElementById('in-desc').value = '';
+  applyTheme('purple');
+  renderBuilder(); go('builder');
+}
+function loadDemoAndGo(){
+  fillExample();
+  go('builder');
+  toast('👀 Contoh soal udah dimuat!');
+}
+
+/* ===== INIT ===== */
+window.addEventListener('load', () => {
+  bgm().src = SONGS[currentSong].url;
+  renderSongList();
+  tryAutoplay();
+
+  if (location.hash.length > 1){
+    const params = new URLSearchParams(location.hash.slice(1));
+    const qEnc = params.get('q');
+    const bid = params.get('bid') || '';
+    const p = params.get('p') || '';
+    if (qEnc){
+      try {
+        const data = decodeQuiz(qEnc);
+        if (!data?.questions?.length) throw new Error('bad');
+        openNameScreen(data, bid, p);
+        return;
+      } catch(e){ alert('Link kuis tidak valid 😔'); }
+    }
+  }
+  applyTheme('purple');
+  renderBuilder();
+});
+</script>
+</body>
+</html>
